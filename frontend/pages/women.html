@@ -1,0 +1,163 @@
+<!-- File: /client/pages/women.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Replicko - Women Collection</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: black;
+      color: white;
+      padding: 15px 20px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links li {
+      display: inline-block;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .banner {
+      background: linear-gradient(to right, #000000, #222222);
+      color: white;
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+
+    .banner h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      padding: 30px;
+    }
+
+    .category-card {
+      background: #000;
+      color: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s ease;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .category-card:hover {
+      transform: translateY(-5px);
+      background: #444;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #000;
+      color: white;
+    }
+
+    /* ✅ Responsive Fix for mobile screens */
+    @media (max-width: 400px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: 10px;
+        gap: 6px;
+      }
+
+      .nav-links li {
+        width: 100%;
+      }
+
+      .nav-links a {
+        display: inline-block;
+        width: 100%;
+        padding: 6px 0;
+      }
+
+      .banner h1 {
+        font-size: 20px;
+      }
+
+      .category-grid {
+        grid-template-columns: 1fr;
+        padding: 15px;
+      }
+
+      .category-card {
+        font-size: 15px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">Replicko</div>
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Header -->
+  <header class="banner">
+    <h1>Women's Brand Categories</h1>
+  </header>
+
+  <!-- Categories -->
+  <section class="category-grid">
+    <a class="category-card" href="./products.html?category=Women&subcategory=Watches">Watches</a>
+    <a class="category-card" href="./products.html?category=Women&subcategory=Bags">Bags</a>
+    <a class="category-card" href="./products.html?category=Women&subcategory=Perfumes">Perfumes</a>
+    <a class="category-card" href="./products.html?category=Women&subcategory=Electronics">Electronics</a>
+    <a class="category-card" href="./products.html?category=Women&subcategory=Combos">Combos</a>
+    <a class="category-card" href="./products.html?category=Women&subcategory=Others">Others</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Replicko. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
