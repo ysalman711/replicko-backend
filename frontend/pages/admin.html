@@ -1,0 +1,107 @@
+<!-- File: /frontend/pages/admin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Replicko Admin Upload</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      padding: 20px;
+      font-family: sans-serif;
+      background: #fafafa;
+    }
+    form {
+      max-width: 500px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background: #f4f4f4;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    input, select, textarea, button {
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background-color: black;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #333;
+    }
+    h2 {
+      text-align: center;
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Upload New Product</h2>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="text" name="title" placeholder="Product Title" required />
+    <textarea name="description" placeholder="Product Description" required></textarea>
+    <input type="number" name="price" placeholder="Price (e.g. 1999)" required />
+
+    <select name="category" required>
+      <option value="">-- Select Category --</option>
+      <option value="Men">Men</option>
+      <option value="Women">Women</option>
+    </select>
+
+    <select name="subcategory" required>
+      <option value="">-- Select Subcategory --</option>
+      <option value="Watches">Watches</option>
+      <option value="Perfumes">Perfumes</option>
+      <option value="Glares">Glares</option>
+      <option value="Bags">Bags</option>
+      <option value="Electronics">Electronics</option>
+      <option value="Combos">Combos</option>
+      <option value="Others">Others</option>
+    </select>
+
+    <input type="file" name="image" accept="image/*,video/*" required />
+    <button type="submit">Upload Product</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+
+    const SERVER_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:5000'
+      : 'http://10.249.150.145:5000'; // 🔁 Replace with your laptop's IP
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = localStorage.getItem('replickoToken');
+      if (!token) return alert('⚠️ Unauthorized. Please login again.');
+
+      const formData = new FormData(form);
+
+      try {
+        const res = await axios.post(`${SERVER_URL}/api/products/upload`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        alert('✅ Product uploaded successfully!');
+        form.reset();
+      } catch (err) {
+        console.error('❌ Upload failed:', err?.response?.data || err.message);
+        alert('❌ Upload failed. Please check your form or server.');
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Replicko - Replica Product Store</title>
+
+  <!-- ✅ SEO Meta Tags -->
+  <meta name="description" content="Replicko - Premium Replica Watches, Perfumes & Accessories. Buy branded products at best prices.">
+  <meta name="keywords" content="Replica Watches, first copy products, Smart Watches, Glares, Perfumes, Luxury Bags, Men, Women">
+  <link rel="canonical" href="https://replicko.in">
+
+  <!-- ✅ Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: black;
+      color: white;
+      flex-wrap: wrap;
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      padding-left: 0;
+      margin: 0;
+    }
+    .nav-links li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .banner {
+      background: linear-gradient(to right, #000, #333);
+      color: white;
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .banner h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .collections {
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .collections h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .collection-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 10px 20px;
+      background-color: black;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      min-width: 120px;
+      text-align: center;
+    }
+    .about, .contact {
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .about h2, .contact h2 {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+    .about p, .contact p {
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto 10px;
+      word-wrap: break-word;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #000;
+      color: white;
+      font-size: 14px;
+    }
+
+    /* ✅ Fully Responsive */
+    @media (max-width: 500px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .nav-links {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .nav-links li {
+        width: 100%;
+      }
+      .nav-links li a {
+        display: block;
+        width: 100%;
+      }
+      .banner h1 {
+        font-size: 22px;
+      }
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">Replicko</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Banner -->
+  <header class="banner">
+    <h1>Discover Premium Replica Brands</h1>
+    <p>Stylish · Affordable · Quality</p>
+  </header>
+
+  <!-- Brand Collections -->
+  <section class="collections">
+    <h2>Brand Collections</h2>
+    <div class="collection-buttons">
+      <a href="pages/men.html" class="btn">For Men</a>
+      <a href="pages/women.html" class="btn">For Women</a>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about" id="about">
+    <h2>About Us</h2>
+    <p>
+      We offer premium quality replica products including watches, perfumes, electronics, and more. Trusted by thousands of customers for affordability and class.
+    </p>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact" id="contact">
+    <h2>Contact Us</h2>
+    <p>📞 WhatsApp: <a href="https://wa.me/919920274474" target="_blank">+91 9920274474</a></p>
+    <p>📞 WhatsApp: <a href="https://wa.me/917738625039" target="_blank">+91 7738625039</a></p>
+    <p>📧 Email: replicko.in@gmail.com</p>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Replicko. All rights reserved.</p>
+    <p>
+      🔗 Follow us:
+      <a href="https://www.instagram.com/replicko?igsh=Y3FyNGx5N3FsMW1v" target="_blank" style="color:white; text-decoration: underline;">Instagram</a> |
+      <a href="https://youtube.com/@salmandhukka-r1z?si=NXMJJ1y4QP9Qt9o5" target="_blank" style="color:white; text-decoration: underline;">YouTube</a>
+    </p>
+  </footer>
+
+</body>
+</html>

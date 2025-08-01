@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Replicko - Products</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">Replicko</div>
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+    </ul>
+  </nav>
+
+  <div class="search-container">
+    <input type="text" id="searchBox" placeholder="Search products by name...">
+  </div>
+
+  <section class="products-grid" id="productsGrid"></section>
+
+  <footer>
+    <p>&copy; 2025 Replicko. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const productsGrid = document.getElementById("productsGrid");
+    const searchBox = document.getElementById("searchBox");
+    let allProducts = [];
+
+    const SERVER_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:5000'
+      : 'http://10.249.150.145:5000'; // 🔁 Replace with your laptop IP if testing on phone
+
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get("category");
+    const subcategory = params.get("subcategory");
+
+    async function fetchProducts() {
+      try {
+        const res = await axios.get(`${SERVER_URL}/api/products/all`);
+        allProducts = res.data;
+
+        let filtered = allProducts;
+        if (category && subcategory) {
+          filtered = allProducts.filter(
+            (p) => p.category === category && p.subcategory === subcategory
+          );
+        }
+
+        renderProducts(filtered);
+      } catch (err) {
+        console.error("❌ API Error:", err.message || err);
+        productsGrid.innerHTML = "<p>❌ Failed to load products. Please try again later.</p>";
+      }
+    }
+
+    function renderProducts(products) {
+      productsGrid.innerHTML = "";
+
+      if (!products.length) {
+        productsGrid.innerHTML = "<p>😓 No products found.</p>";
+        return;
+      }
+
+      products.forEach((p) => {
+        const ext = p.image?.split('.').pop().toLowerCase();
+        const imageURL = `${SERVER_URL}/uploads/${p.image}`;
+        let mediaHTML = "";
+
+        if (["jpg", "jpeg", "png", "webp", "gif"].includes(ext)) {
+          mediaHTML = `<img src="${imageURL}" alt="${p.title}" />`;
+        } else if (["mp4", "mov"].includes(ext)) {
+          const type = ext === "mov" ? "quicktime" : "mp4";
+          mediaHTML = `
+            <video controls>
+              <source src="${imageURL}" type="video/${type}">
+              Your browser does not support the video tag.
+            </video>
+          `;
+        }
+
+        const encodedMsg = encodeURIComponent(
+          `Hi! I'm interested in this product from Replicko.in:%0A%0A🛍️ *${p.title}*%0A💰 Price: ₹${p.price}%0A📁 Category: ${p.category} > ${p.subcategory}%0A🖼️ Image/Video: ${imageURL}`
+        );
+
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        card.innerHTML = `
+          ${mediaHTML}
+          <h3>${p.title}</h3>
+          <p>${p.description}</p>
+          <p><strong>₹${p.price}</strong></p>
+          <div class="buttons">
+            <a class="btn" href="https://wa.me/919920274474?text=${encodedMsg}" target="_blank">Enquire Salman</a>
+            <a class="btn" href="https://wa.me/917738625039?text=${encodedMsg}" target="_blank">Enquire Imran</a>
+          </div>
+        `;
+
+        productsGrid.appendChild(card);
+      });
+    }
+
+    searchBox.addEventListener("input", () => {
+      const keyword = searchBox.value.toLowerCase();
+      const filtered = allProducts.filter((p) =>
+        p.title.toLowerCase().includes(keyword)
+      );
+      renderProducts(filtered);
+    });
+
+    fetchProducts();
+  </script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 20px;
+      background-color: black;
+      color: white;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .navbar .logo {
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .search-container {
+      text-align: center;
+      margin: 20px;
+    }
+
+    .search-container input {
+      padding: 10px;
+      width: 80%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+
+    .product-card img,
+    .product-card video {
+      width: 100%;
+      border-radius: 10px;
+      max-height: 230px;
+      object-fit: cover;
+    }
+
+    .product-card h3 {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+
+    .product-card p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    .product-card .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .product-card .btn {
+      background: #25D366;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .btn:hover {
+      background: #1ebe5d;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #f4f4f4;
+      margin-top: 30px;
+    }
+
+    @media screen and (max-width: 400px) {
+      .products-grid {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        gap: 15px;
+      }
+    }
+  </style>
+</body>
+</html>
