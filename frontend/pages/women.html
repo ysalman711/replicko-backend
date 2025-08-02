@@ -1,4 +1,3 @@
-<!-- File: /client/pages/women.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,25 +57,39 @@
 
     .category-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
       padding: 30px;
+      justify-items: center;
     }
 
     .category-card {
       background: #000;
-      color: #fff;
-      border-radius: 10px;
-      padding: 20px;
+      color: #0ff;
+      border-radius: 12px;
+      padding: 15px 10px;
       text-align: center;
       transition: transform 0.3s ease;
       text-decoration: none;
-      font-weight: 500;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 260px;
+    }
+
+    .category-card img {
+      width: 100%;
+      max-width: 220px;
+      height: 160px;
+      object-fit: cover;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      background: #fff;
     }
 
     .category-card:hover {
       transform: translateY(-5px);
-      background: #444;
+      background: #111;
     }
 
     footer {
@@ -86,8 +99,7 @@
       color: white;
     }
 
-    /* ✅ Responsive Fix for mobile screens */
-    @media (max-width: 400px) {
+    @media (max-width: 500px) {
       .navbar {
         flex-direction: column;
         align-items: flex-start;
@@ -101,28 +113,23 @@
         gap: 6px;
       }
 
-      .nav-links li {
-        width: 100%;
-      }
-
-      .nav-links a {
-        display: inline-block;
-        width: 100%;
-        padding: 6px 0;
-      }
-
       .banner h1 {
         font-size: 20px;
       }
 
       .category-grid {
         grid-template-columns: 1fr;
-        padding: 15px;
+        padding: 20px 15px;
       }
 
       .category-card {
-        font-size: 15px;
+        font-size: 16px;
         padding: 15px;
+      }
+
+      .category-card img {
+        height: auto;
+        object-fit: contain;
       }
     }
   </style>
@@ -139,19 +146,37 @@
     </ul>
   </nav>
 
-  <!-- Header -->
+  <!-- Banner -->
   <header class="banner">
     <h1>Women's Brand Categories</h1>
   </header>
 
-  <!-- Categories -->
+  <!-- Category Grid -->
   <section class="category-grid">
-    <a class="category-card" href="./products.html?category=Women&subcategory=Watches">Watches</a>
-    <a class="category-card" href="./products.html?category=Women&subcategory=Bags">Bags</a>
-    <a class="category-card" href="./products.html?category=Women&subcategory=Perfumes">Perfumes</a>
-    <a class="category-card" href="./products.html?category=Women&subcategory=Electronics">Electronics</a>
-    <a class="category-card" href="./products.html?category=Women&subcategory=Combos">Combos</a>
-    <a class="category-card" href="./products.html?category=Women&subcategory=Others">Others</a>
+    <a class="category-card" href="./products.html?category=Women&subcategory=Watches">
+      <img src="../images/categories/wowatches.jpg" alt="Watches" />
+      Watches
+    </a>
+    <a class="category-card" href="./products.html?category=Women&subcategory=Bags">
+      <img src="../images/categories/wobags.jpg" alt="Bags" />
+      Bags
+    </a>
+    <a class="category-card" href="./products.html?category=Women&subcategory=Perfumes">
+      <img src="../images/categories/woperfumes.jpg" alt="Perfumes" />
+      Perfumes
+    </a>
+    <a class="category-card" href="./products.html?category=Women&subcategory=Electronics">
+      <img src="../images/categories/woelectronics.jpg" alt="Electronics" />
+      Electronics
+    </a>
+    <a class="category-card" href="./products.html?category=Women&subcategory=Combos">
+      <img src="../images/categories/wocombo.jpg" alt="Combos" />
+      Combos
+    </a>
+    <a class="category-card" href="./products.html?category=Women&subcategory=Others">
+      <img src="../images/categories/woothers.jpg" alt="Others" />
+      Others
+    </a>
   </section>
 
   <!-- Footer -->
@@ -161,3 +186,4 @@
 
 </body>
 </html>
+
