@@ -120,6 +120,9 @@ body {
   font-weight: 600;
   font-size: 15px;
 }
+#vir{
+  height: 45vh;
+}
 
 /* About & Contact */
 .about, .contact {
