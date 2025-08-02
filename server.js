@@ -5,11 +5,12 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
 
+// ✅ Load env vars
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
 
-// ✅ Console Checks
+// ✅ Console checks
 console.log('✅ MONGO_URI:', process.env.MONGO_URI ? 'Loaded' : 'Missing');
 console.log('✅ ADMIN_EMAIL:', process.env.ADMIN_EMAIL);
 console.log('✅ JWT_SECRET:', process.env.JWT_SECRET ? 'Loaded' : 'Missing');
@@ -26,18 +27,17 @@ if (!fs.existsSync(uploadDir)) {
 }
 app.use('/uploads', express.static(uploadDir));
 
-// ✅ Serve static frontend files (optional)
-app.use('/frontend', express.static(path.join(__dirname, 'frontend')));
+// ✅ Serve frontend files
+app.use('/', express.static(path.join(__dirname, 'frontend')));
 
-// ✅ Health Check Route
-app.get('/', (req, res) => {
-  res.send('✅ Replicko backend is online and responding');
+// ✅ Health check
+app.get('/health', (req, res) => {
+  res.send('✅ Replicko backend is online and healthy');
 });
 
-// ✅ Admin Login
+// ✅ Admin login route
 app.post('/api/admin/login', (req, res) => {
   const { email, password } = req.body;
-
   if (
     email === process.env.ADMIN_EMAIL &&
     password === process.env.ADMIN_PASSWORD
@@ -51,17 +51,17 @@ app.post('/api/admin/login', (req, res) => {
   }
 });
 
-// ✅ Product Routes
+// ✅ API routes
 const productRoutes = require('./routes/productRoutes');
 app.use('/api/products', productRoutes);
 
-// ✅ MongoDB Connection
+// ✅ DB connection
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB connected'))
-  .catch((err) => console.log('❌ MongoDB error:', err));
+  .catch((err) => console.error('❌ MongoDB error:', err));
 
-// ✅ Start Server
+// ✅ Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server started on http://0.0.0.0:${PORT}`);
