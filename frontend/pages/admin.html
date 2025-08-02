@@ -42,6 +42,13 @@
       text-align: center;
       color: #222;
     }
+    .logout {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .logout button {
+      background: red;
+    }
   </style>
 </head>
 <body>
@@ -73,12 +80,16 @@
     <button type="submit">Upload Product</button>
   </form>
 
+  <div class="logout">
+    <button onclick="logout()">Logout</button>
+  </div>
+
   <script>
     const form = document.getElementById('uploadForm');
 
     const SERVER_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? 'http://localhost:5000'
-      : 'http://10.249.150.145:5000'; // 🔁 Replace with your laptop's IP
+      : 'https://replicko-backend.onrender.com';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -101,6 +112,11 @@
         alert('❌ Upload failed. Please check your form or server.');
       }
     });
+
+    function logout() {
+      localStorage.removeItem('replickoToken');
+      window.location.href = '/pages/login.html';
+    }
   </script>
 
 </body>

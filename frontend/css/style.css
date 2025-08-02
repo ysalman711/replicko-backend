@@ -1,70 +1,196 @@
-body {
+* {
+  box-sizing: border-box;
   margin: 0;
+  padding: 0;
+}
+body {
   font-family: 'Poppins', sans-serif;
   background: #fff;
   color: #333;
 }
 
+/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #000;
-  padding: 15px 30px;
-  color: #fff;
+  padding: 12px 24px;
+  color: white;
+  flex-wrap: wrap;
 }
-
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+}
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 20px;
+  gap: 18px;
 }
-
 .nav-links li a {
-  color: #fff;
+  color: white;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
 }
 
-.banner {
+/* Hero Banner */
+.hero {
+  height: 45vh;
+  background: url('../images/bg-dark.png') no-repeat center center/cover;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero .overlay {
+  background: white(0,0,0,0.6);
+  padding: 30px 20px;
+  border-radius: 8px;
   text-align: center;
-  padding: 80px 20px;
-  background: linear-gradient(to right, #000, #444);
-  color: #fff;
+  color: white;
+}
+.hero h1 {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+.hero p {
+  font-size: 15px;
 }
 
-.banner h1 {
-  font-size: 2.5rem;
-}
-
-.banner p {
-  font-size: 1.2rem;
-}
-
+/* Brand Collection */
 .collections {
   text-align: center;
-  padding: 50px 20px;
+  padding: 15px 10px;
 }
-
-.collection-buttons .btn {
-  margin: 10px;
-  padding: 12px 24px;
-  background: #000;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 8px;
+.collections h2 {
+  font-size: 22px;
+  margin-bottom: 18px;
+}
+.collection-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.btn {
+  background-color: black;
+  color: rgb(13, 199, 212);
+  padding: 10px 20px;
+  border-radius: 6px;
   font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
+.btn:hover {
+  background-color: #1c1c1c;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+
+/* Celebrity Showcase */
+.celebrity-showcase {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 35px 15px;
+  background: #f5f5f5;
+}
+.celebrity-showcase .card {
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 280px;
+  text-align: center;
+}
+.celebrity-showcase .card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.celebrity-showcase .card p {
+  padding: 12px 10px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* About & Contact */
 .about, .contact {
-  padding: 40px 20px;
+  padding: 25px 15px;
   text-align: center;
-  background: #f9f9f9;
+}
+.about h2, .contact h2 {
+  font-size: 27px;
+  margin-bottom: 10px;
+}
+.about p, .contact p {
+  max-width: 650px;
+  margin: 0 auto 8px;
+  line-height: 1.5;
+  font-size: 17px;
+}
+.icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 8px;
 }
 
+
+/* Footer */
 footer {
-  text-align: center;
   background: #000;
   color: #fff;
   padding: 15px;
+  font-size: 13px;
+  text-align: center;
+}
+footer .icon {
+  width: 21px;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+#inst{
+  color: #fff;
+}
+
+/* 🔁 Responsive Fixes */
+@media (max-width: 768px) {
+  .hero {
+    height: 48vh;
+  }
+  .hero h1 {
+    font-size: 23px;
+  }
+  .hero p {
+    font-size: 16px;
+  }
+  .celebrity-showcase {
+    padding: 25px 10px;
+  }
+  .celebrity-showcase .card {
+    max-width: 90%;
+  }
+}
+@media (max-width: 480px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .nav-links {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .collection-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
 }
