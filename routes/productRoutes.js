@@ -4,53 +4,49 @@ const multer = require('multer');
 const path = require('path');
 const Product = require('../models/Product');
 
-// ✅ Multer Storage Config
+// ✅ Multer config to store image in Render Disk (/uploads)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../uploads'));
+    cb(null, '/uploads'); // Must match Render Disk mount path
   },
   filename: function (req, file, cb) {
-    const uniqueName = Date.now() + '-' + file.originalname.replace(/\s+/g, '');
-    cb(null, uniqueName);
+    const uniqueName = Date.now() + path.extname(file.originalname);
+    cb(null, uniqueName); // e.g. 1691234567890.jpg
   }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
-// ✅ Get All Products
-router.get('/all', async (req, res) => {
-  try {
-    const products = await Product.find().sort({ date: -1 });
-    res.json(products);
-  } catch (err) {
-    console.error('❌ Error fetching products:', err);
-    res.status(500).json({ message: 'Server error while fetching products.' });
-  }
-});
-
-// ✅ Upload New Product
+// ✅ POST: Upload product
 router.post('/upload', upload.single('image'), async (req, res) => {
   try {
-    const { title, description, price, category, subcategory } = req.body;
-
-    if (!req.file) {
-      return res.status(400).json({ message: 'Image not uploaded' });
-    }
+    const { name, description, price, category, gender } = req.body;
+    const image = req.file ? `/uploads/${req.file.filename}` : '';
 
     const newProduct = new Product({
-      title,
+      name,
       description,
       price,
       category,
-      subcategory,
-      image: req.file.filename
+      gender,
+      image,
     });
 
     await newProduct.save();
-    res.json({ message: 'Product uploaded successfully!' });
+    res.status(201).json({ message: 'Product uploaded successfully', product: newProduct });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Product upload failed' });
+  }
+});
+
+// ✅ GET: All products
+router.get('/', async (req, res) => {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.json(products);
   } catch (err) {
-    console.error('❌ Upload error:', err);
-    res.status(500).json({ message: 'Upload failed. Try again later.' });
+    res.status(500).json({ error: 'Failed to fetch products' });
   }
 });
 
