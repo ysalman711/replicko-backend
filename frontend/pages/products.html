@@ -68,7 +68,7 @@
 
       products.forEach((p) => {
         const ext = p.image?.split('.').pop().toLowerCase();
-        const imageURL = `${SERVER_URL}/uploads/${p.image}`;
+        const imageURL = p.image;
         let mediaHTML = "";
 
         if (["jpg", "jpeg", "png", "webp", "gif"].includes(ext)) {
