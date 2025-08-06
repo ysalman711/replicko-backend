@@ -1,21 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const path = require('path');
 const Product = require('../models/Product');
+const cloudinary = require('cloudinary').v2;
+const streamifier = require('streamifier');
 
-// ✅ Multer Storage Config
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../uploads'));
-  },
-  filename: function (req, file, cb) {
-    const uniqueName = Date.now() + '-' + file.originalname.replace(/\s+/g, '');
-    cb(null, uniqueName);
-  }
+// ✅ Cloudinary config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const upload = multer({ storage: storage });
+// ✅ Multer setup (memory storage)
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // ✅ Get All Products
 router.get('/all', async (req, res) => {
@@ -28,7 +27,7 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// ✅ Upload New Product
+// ✅ Upload New Product (with Cloudinary)
 router.post('/upload', upload.single('image'), async (req, res) => {
   try {
     const { title, description, price, category, subcategory } = req.body;
@@ -37,13 +36,30 @@ router.post('/upload', upload.single('image'), async (req, res) => {
       return res.status(400).json({ message: 'Image not uploaded' });
     }
 
+    // Upload to Cloudinary
+    const streamUpload = (req) => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream((error, result) => {
+          if (result) {
+            resolve(result);
+          } else {
+            reject(error);
+          }
+        });
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
+      });
+    };
+
+    const result = await streamUpload(req);
+
+    // Save product with Cloudinary URL
     const newProduct = new Product({
       title,
       description,
       price,
       category,
       subcategory,
-      image: req.file.filename
+      image: result.secure_url, // ✅ Cloudinary URL
     });
 
     await newProduct.save();
