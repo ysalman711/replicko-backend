@@ -33,7 +33,7 @@
 
     const SERVER_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? 'http://localhost:5000'
-      : 'https://replicko-backend.onrender.com'; // 🔁 Replace with your laptop IP if testing on phone
+      : 'https://replicko-backend.onrender.com';
 
     const params = new URLSearchParams(window.location.search);
     const category = params.get("category");
@@ -96,8 +96,8 @@
           <p>${p.description}</p>
           <p><strong>₹${p.price}</strong></p>
           <div class="buttons">
-            <a class="btn" href="https://wa.me/919920274474?text=${encodedMsg}" target="_blank">Enquire Salman</a>
-            <a class="btn" href="https://wa.me/917738625039?text=${encodedMsg}" target="_blank">Enquire Imran</a>
+            <a class="btn" href="https://wa.me/919920274474?text=${encodedMsg}" target="_blank">Click for Enquiry</a>
+            <a class="btn" href="https://wa.me/917738625039?text=${encodedMsg}" target="_blank">Click to Buy</a>
           </div>
         `;
 
@@ -167,7 +167,7 @@
 
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* 🔄 2 per row on mobile */
       gap: 20px;
       padding: 20px;
     }
@@ -189,13 +189,13 @@
     }
 
     .product-card h3 {
-      font-size: 18px;
-      margin: 10px 0;
+      font-size: 16px;
+      margin: 10px 0 5px;
     }
 
     .product-card p {
-      margin: 5px 0;
-      font-size: 14px;
+      margin: 4px 0;
+      font-size: 13px;
     }
 
     .product-card .buttons {
@@ -225,14 +225,6 @@
       padding: 20px;
       background-color: #f4f4f4;
       margin-top: 30px;
-    }
-
-    @media screen and (max-width: 400px) {
-      .products-grid {
-        grid-template-columns: 1fr;
-        padding: 10px;
-        gap: 15px;
-      }
     }
   </style>
 </body>
