@@ -1,234 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Replicko - Products</title>
-  <link rel="stylesheet" href="../css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Replicko - Products</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111;
+            color: white;
+        }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: #1b1b1b;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        .product-card img {
+            max-width: 100%;
+            max-height: 220px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: white;
+        }
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .product-price {
+            color: #00ff88;
+            font-size: 1rem;
+            margin: 8px 0;
+        }
+        .whatsapp-btn {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #25D366;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .whatsapp-btn:hover {
+            background-color: #1ebe5d;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Our Products</h1>
+        <div class="products-grid" id="products-container">
+            <p>Loading products...</p>
+        </div>
+    </div>
 
-  <nav class="navbar">
-    <div class="logo">Replicko</div>
-    <ul class="nav-links">
-      <li><a href="../index.html">Home</a></li>
-    </ul>
-  </nav>
+    <script>
+        const API_URL = "https://replicko-backend.onrender.com/api/products/all";
+        const productsContainer = document.getElementById("products-container");
 
-  <div class="search-container">
-    <input type="text" id="searchBox" placeholder="Search products by name...">
-  </div>
+        async function fetchProducts() {
+            try {
+                const res = await fetch(API_URL);
+                const products = await res.json();
 
-  <section class="products-grid" id="productsGrid"></section>
+                if (!products || products.length === 0) {
+                    productsContainer.innerHTML = "<p>No products found.</p>";
+                    return;
+                }
 
-  <footer>
-    <p>&copy; 2025 Replicko. All rights reserved.</p>
-  </footer>
-
-  <script>
-    const productsGrid = document.getElementById("productsGrid");
-    const searchBox = document.getElementById("searchBox");
-    let allProducts = [];
-
-    const SERVER_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? 'http://localhost:5000'
-      : 'https://replicko-backend.onrender.com';
-
-    const params = new URLSearchParams(window.location.search);
-    const category = params.get("category");
-    const subcategory = params.get("subcategory");
-
-    async function fetchProducts() {
-      try {
-        const res = await axios.get(`${SERVER_URL}/api/products/all`);
-        allProducts = res.data;
-
-        let filtered = allProducts;
-        if (category && subcategory) {
-          filtered = allProducts.filter(
-            (p) => p.category === category && p.subcategory === subcategory
-          );
+                renderProducts(products);
+            } catch (err) {
+                console.error("Error fetching products:", err);
+                productsContainer.innerHTML = "<p>Failed to load products.</p>";
+            }
         }
 
-        renderProducts(filtered);
-      } catch (err) {
-        console.error("❌ API Error:", err.message || err);
-        productsGrid.innerHTML = "<p>❌ Failed to load products. Please try again later.</p>";
-      }
-    }
+        function renderProducts(products) {
+            productsContainer.innerHTML = products.map(p => {
+                // Ensure image is handled correctly even if URL has query params
+                let imgURL = p.image ? p.image.trim() : "";
+                let fileExt = imgURL.split("?")[0].split(".").pop().toLowerCase();
 
-    function renderProducts(products) {
-      productsGrid.innerHTML = "";
+                // Allow only valid image formats
+                const validExts = ["jpg", "jpeg", "png", "webp", "gif"];
+                if (!validExts.includes(fileExt)) {
+                    console.warn(`Invalid or missing image format for: ${p.title}`);
+                    imgURL = "https://via.placeholder.com/250?text=No+Image";
+                }
 
-      if (!products.length) {
-        productsGrid.innerHTML = "<p>😓 No products found.</p>";
-        return;
-      }
+                // WhatsApp link
+                const message = encodeURIComponent(`Hello, I am interested in the product: ${p.title} - Price: ₹${p.price}`);
+                const whatsappLink = `https://wa.me/918866571157?text=${message}`;
 
-      products.forEach((p) => {
-        const imageURL = p.image?.trim() || "";
-        const cleanExt = imageURL.split('?')[0].split('.').pop().toLowerCase();
-        let mediaHTML = "";
-
-        if (["jpg", "jpeg", "png", "webp", "gif"].includes(cleanExt)) {
-          mediaHTML = `<img src="${imageURL}" alt="${p.title}" onerror="this.src='../images/placeholder.jpg'">`;
-        } else if (["mp4", "mov"].includes(cleanExt)) {
-          const type = cleanExt === "mov" ? "quicktime" : "mp4";
-          mediaHTML = `
-            <video controls>
-              <source src="${imageURL}" type="video/${type}">
-              Your browser does not support the video tag.
-            </video>
-          `;
-        } else {
-          // Default to showing as image if unknown
-          mediaHTML = `<img src="${imageURL}" alt="${p.title}" onerror="this.src='../images/placeholder.jpg'">`;
+                return `
+                    <div class="product-card">
+                        <img src="${imgURL}" alt="${p.title}" onerror="this.src='https://via.placeholder.com/250?text=Image+Not+Found'">
+                        <div class="product-title">${p.title || "No Title"}</div>
+                        <div class="product-price">₹${p.price || "N/A"}</div>
+                        <a class="whatsapp-btn" href="${whatsappLink}" target="_blank">Enquire on WhatsApp</a>
+                    </div>
+                `;
+            }).join("");
         }
 
-        const encodedMsg = encodeURIComponent(
-          `Hi! I'm interested in this product from Replicko.in:%0A%0A🛍️ *${p.title}*%0A💰 Price: ₹${p.price}%0A📁 Category: ${p.category} > ${p.subcategory}%0A🖼️ Image/Video: ${imageURL}`
-        );
-
-        const card = document.createElement("div");
-        card.className = "product-card";
-
-        card.innerHTML = `
-          ${mediaHTML}
-          <h3>${p.title}</h3>
-          <p>${p.description}</p>
-          <p><strong>₹${p.price}</strong></p>
-          <div class="buttons">
-            <a class="btn" href="https://wa.me/919920274474?text=${encodedMsg}" target="_blank">Click for Enquiry</a>
-            <a class="btn" href="https://wa.me/917738625039?text=${encodedMsg}" target="_blank">Click to Buy</a>
-          </div>
-        `;
-
-        productsGrid.appendChild(card);
-      });
-    }
-
-    searchBox.addEventListener("input", () => {
-      const keyword = searchBox.value.toLowerCase();
-      const filtered = allProducts.filter((p) =>
-        p.title.toLowerCase().includes(keyword)
-      );
-      renderProducts(filtered);
-    });
-
-    fetchProducts();
-  </script>
-
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      padding: 15px 20px;
-      background-color: black;
-      color: white;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .navbar .logo {
-      font-size: 22px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    .nav-links {
-      list-style: none;
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .nav-links a {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .search-container {
-      text-align: center;
-      margin: 20px;
-    }
-
-    .search-container input {
-      padding: 10px;
-      width: 80%;
-      max-width: 400px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .product-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.08);
-      text-align: center;
-    }
-
-    .product-card img,
-    .product-card video {
-      width: 100%;
-      border-radius: 10px;
-      max-height: 230px;
-      object-fit: cover;
-    }
-
-    .product-card h3 {
-      font-size: 16px;
-      margin: 10px 0 5px;
-    }
-
-    .product-card p {
-      margin: 4px 0;
-      font-size: 13px;
-    }
-
-    .product-card .buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .product-card .btn {
-      background: #25D366;
-      color: white;
-      padding: 10px;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      text-decoration: none;
-      display: block;
-    }
-
-    .btn:hover {
-      background: #1ebe5d;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #f4f4f4;
-      margin-top: 30px;
-    }
-  </style>
+        fetchProducts();
+    </script>
 </body>
 </html>
