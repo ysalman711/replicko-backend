@@ -67,20 +67,23 @@
       }
 
       products.forEach((p) => {
-        const ext = p.image?.split('.').pop().toLowerCase();
-        const imageURL = p.image;
+        const imageURL = p.image?.trim() || "";
+        const cleanExt = imageURL.split('?')[0].split('.').pop().toLowerCase();
         let mediaHTML = "";
 
-        if (["jpg", "jpeg", "png", "webp", "gif"].includes(ext)) {
-          mediaHTML = `<img src="${imageURL}" alt="${p.title}" />`;
-        } else if (["mp4", "mov"].includes(ext)) {
-          const type = ext === "mov" ? "quicktime" : "mp4";
+        if (["jpg", "jpeg", "png", "webp", "gif"].includes(cleanExt)) {
+          mediaHTML = `<img src="${imageURL}" alt="${p.title}" onerror="this.src='../images/placeholder.jpg'">`;
+        } else if (["mp4", "mov"].includes(cleanExt)) {
+          const type = cleanExt === "mov" ? "quicktime" : "mp4";
           mediaHTML = `
             <video controls>
               <source src="${imageURL}" type="video/${type}">
               Your browser does not support the video tag.
             </video>
           `;
+        } else {
+          // Default to showing as image if unknown
+          mediaHTML = `<img src="${imageURL}" alt="${p.title}" onerror="this.src='../images/placeholder.jpg'">`;
         }
 
         const encodedMsg = encodeURIComponent(
@@ -167,7 +170,7 @@
 
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* 🔄 2 per row on mobile */
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 20px;
       padding: 20px;
     }
