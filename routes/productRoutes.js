@@ -1,80 +1,49 @@
-import express from "express";
-import multer from "multer";
-import Product from "../models/Product.js";
+const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const Product = require("../models/Product"); // ✅ CommonJS require
 
 const router = express.Router();
 
-// Multer config for local uploads (Cloudinary can also be integrated here if needed)
+// Multer Storage Setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  }
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
 });
-
 const upload = multer({ storage });
 
-// Create product (original POST route)
-router.post("/", upload.single("image"), async (req, res) => {
+// Add Product
+router.post("/add", upload.single("image"), async (req, res) => {
   try {
-    const { title, price, category, subcategory, imageUrl } = req.body;
-
-    if (!title || !price || !category) {
-      return res.status(400).json({ message: "Title, price, and category are required" });
-    }
-
     const newProduct = new Product({
-      title,
-      price,
-      category,
-      subcategory,
-      image: imageUrl || (req.file ? `/uploads/${req.file.filename}` : null)
+      title: req.body.title,
+      description: req.body.description,
+      price: req.body.price,
+      category: req.body.category,
+      subcategory: req.body.subcategory,
+      image: req.file ? `/uploads/${req.file.filename}` : "",
     });
-
     await newProduct.save();
-    res.status(201).json({ message: "Product created successfully", product: newProduct });
-  } catch (error) {
-    console.error("Error creating product:", error);
-    res.status(500).json({ message: "Server error" });
+    res.json({ success: true, message: "Product added successfully!" });
+  } catch (err) {
+    console.error("Error adding product:", err);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// Create product (upload route for admin.html compatibility)
-router.post("/upload", upload.single("image"), async (req, res) => {
-  try {
-    const { title, price, category, subcategory, imageUrl } = req.body;
-
-    if (!title || !price || !category) {
-      return res.status(400).json({ message: "Title, price, and category are required" });
-    }
-
-    const newProduct = new Product({
-      title,
-      price,
-      category,
-      subcategory,
-      image: imageUrl || (req.file ? `/uploads/${req.file.filename}` : null)
-    });
-
-    await newProduct.save();
-    res.status(201).json({ message: "Product uploaded successfully", product: newProduct });
-  } catch (error) {
-    console.error("Error uploading product:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-// Get all products
+// Get All Products
 router.get("/", async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().sort({ date: -1 });
     res.json(products);
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    res.status(500).json({ message: "Server error" });
+  } catch (err) {
+    console.error("Error fetching products:", err);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
-export default router;
+module.exports = router;
