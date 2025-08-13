@@ -34,6 +34,7 @@
       display: flex;
       flex-direction: column;
       transition: transform 0.2s ease;
+      padding-bottom: 15px;
     }
 
     .product-card:hover {
@@ -48,9 +49,16 @@
 
     .product-title {
       font-size: 1.1em;
-      margin: 10px 0;
+      margin: 10px 0 5px 0;
       padding: 0 10px;
       color: #444;
+      font-weight: bold;
+    }
+
+    .product-description {
+      font-size: 0.9em;
+      color: #666;
+      margin: 0 10px 10px 10px;
     }
 
     .product-price {
@@ -64,12 +72,13 @@
       display: inline-block;
       background: #25d366;
       color: white;
-      padding: 10px 15px;
+      padding: 8px 12px;
       border-radius: 5px;
       text-decoration: none;
       font-weight: 500;
-      margin: auto auto 15px auto;
+      margin: 4px;
       transition: background 0.2s ease;
+      font-size: 0.9em;
     }
 
     .whatsapp-btn:hover {
@@ -125,17 +134,24 @@
     container.innerHTML = products.map(p => {
       const imgURL = p.image || p.imageUrl || "https://via.placeholder.com/250?text=No+Image";
       const title = p.title || p.name || "No Title";
+      const description = p.description || "No description available.";
       const price = p.price ? `₹${p.price}` : "Price on Request";
-      const message = encodeURIComponent(`Hello, I am interested in: ${title} - ${price}`);
-      const whatsappLink = `https://wa.me/918866571157?text=${message}`;
+
+      const enquiryMsg = encodeURIComponent(`Hello, I am interested in: ${title} - ${price} (For Enquiry)`);
+      const buyMsg = encodeURIComponent(`Hello, I want to buy: ${title} - ${price}`);
+
+      const enquiryLink = `https://wa.me/919920274474?text=${enquiryMsg}`;
+      const buyLink = `https://wa.me/917738625039?text=${buyMsg}`;
 
       return `
         <div class="product-card">
           <img src="${imgURL}" alt="${title}" 
                onerror="this.src='https://via.placeholder.com/250?text=Image+Not+Found'">
           <div class="product-title">${title}</div>
+          <div class="product-description">${description}</div>
           <div class="product-price">${price}</div>
-          <a class="whatsapp-btn" href="${whatsappLink}" target="_blank">Enquire on WhatsApp</a>
+          <a class="whatsapp-btn" href="${enquiryLink}" target="_blank">For Enquiry</a>
+          <a class="whatsapp-btn" href="${buyLink}" target="_blank">To Buy</a>
         </div>
       `;
     }).join("");
