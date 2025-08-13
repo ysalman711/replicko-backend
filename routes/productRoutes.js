@@ -1,72 +1,87 @@
-const express = require('express');
+// D:\replicko\replicko\routes\productRoutes.js
+
+const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const Product = require("../models/Product");
+
 const router = express.Router();
-const multer = require('multer');
-const Product = require('../models/Product');
-const cloudinary = require('cloudinary').v2;
-const streamifier = require('streamifier');
 
-// ✅ Cloudinary config
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-// ✅ Multer setup (memory storage)
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
-// ✅ Get All Products
-router.get('/all', async (req, res) => {
-  try {
-    const products = await Product.find().sort({ date: -1 });
-    res.json(products);
-  } catch (err) {
-    console.error('❌ Error fetching products:', err);
-    res.status(500).json({ message: 'Server error while fetching products.' });
+// Storage setup for image uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../uploads"));
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
   }
 });
 
-// ✅ Upload New Product (with Cloudinary)
-router.post('/upload', upload.single('image'), async (req, res) => {
-  try {
-    const { title, description, price, category, subcategory } = req.body;
+const upload = multer({ storage });
 
-    if (!req.file) {
-      return res.status(400).json({ message: 'Image not uploaded' });
+// ✅ Create a product
+router.post("/", upload.single("image"), async (req, res) => {
+  try {
+    const { title, price, category, subcategory } = req.body;
+
+    if (!title || !price || !category) {
+      return res.status(400).json({ message: "Title, price, and category are required" });
     }
 
-    // Upload to Cloudinary
-    const streamUpload = (req) => {
-      return new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream((error, result) => {
-          if (result) {
-            resolve(result);
-          } else {
-            reject(error);
-          }
-        });
-        streamifier.createReadStream(req.file.buffer).pipe(stream);
-      });
-    };
-
-    const result = await streamUpload(req);
-
-    // Save product with Cloudinary URL
     const newProduct = new Product({
       title,
-      description,
       price,
       category,
       subcategory,
-      image: result.secure_url, // ✅ Cloudinary URL
+      image: req.file ? `/uploads/${req.file.filename}` : null
     });
 
     await newProduct.save();
-    res.json({ message: 'Product uploaded successfully!' });
-  } catch (err) {
-    console.error('❌ Upload error:', err);
-    res.status(500).json({ message: 'Upload failed. Try again later.' });
+    res.status(201).json({ message: "Product created successfully", product: newProduct });
+  } catch (error) {
+    console.error("Error creating product:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ Get all products (with optional filtering by category/subcategory)
+router.get("/", async (req, res) => {
+  try {
+    const { category, subcategory } = req.query;
+
+    let filter = {};
+    if (category) filter.category = { $regex: new RegExp(`^${category}$`, "i") };
+    if (subcategory) filter.subcategory = { $regex: new RegExp(`^${subcategory}$`, "i") };
+
+    const products = await Product.find(filter).sort({ createdAt: -1 });
+    res.json(products);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ Get single product by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    res.json(product);
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ Delete a product
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+    if (!deletedProduct) return res.status(404).json({ message: "Product not found" });
+    res.json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
