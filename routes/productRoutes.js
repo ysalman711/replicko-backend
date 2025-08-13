@@ -1,28 +1,25 @@
-// D:\replicko\replicko\routes\productRoutes.js
-
-const express = require("express");
-const multer = require("multer");
-const path = require("path");
-const Product = require("../models/Product");
+import express from "express";
+import multer from "multer";
+import Product from "../models/Product.js";
 
 const router = express.Router();
 
-// Storage setup for image uploads
+// Multer config for local uploads (Cloudinary can also be integrated here if needed)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../uploads"));
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    cb(null, Date.now() + "-" + file.originalname);
   }
 });
 
 const upload = multer({ storage });
 
-// ✅ Create a product
+// Create product (original POST route)
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-    const { title, price, category, subcategory } = req.body;
+    const { title, price, category, subcategory, imageUrl } = req.body;
 
     if (!title || !price || !category) {
       return res.status(400).json({ message: "Title, price, and category are required" });
@@ -33,7 +30,7 @@ router.post("/", upload.single("image"), async (req, res) => {
       price,
       category,
       subcategory,
-      image: req.file ? `/uploads/${req.file.filename}` : null
+      image: imageUrl || (req.file ? `/uploads/${req.file.filename}` : null)
     });
 
     await newProduct.save();
@@ -44,16 +41,35 @@ router.post("/", upload.single("image"), async (req, res) => {
   }
 });
 
-// ✅ Get all products (with optional filtering by category/subcategory)
+// Create product (upload route for admin.html compatibility)
+router.post("/upload", upload.single("image"), async (req, res) => {
+  try {
+    const { title, price, category, subcategory, imageUrl } = req.body;
+
+    if (!title || !price || !category) {
+      return res.status(400).json({ message: "Title, price, and category are required" });
+    }
+
+    const newProduct = new Product({
+      title,
+      price,
+      category,
+      subcategory,
+      image: imageUrl || (req.file ? `/uploads/${req.file.filename}` : null)
+    });
+
+    await newProduct.save();
+    res.status(201).json({ message: "Product uploaded successfully", product: newProduct });
+  } catch (error) {
+    console.error("Error uploading product:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Get all products
 router.get("/", async (req, res) => {
   try {
-    const { category, subcategory } = req.query;
-
-    let filter = {};
-    if (category) filter.category = { $regex: new RegExp(`^${category}$`, "i") };
-    if (subcategory) filter.subcategory = { $regex: new RegExp(`^${subcategory}$`, "i") };
-
-    const products = await Product.find(filter).sort({ createdAt: -1 });
+    const products = await Product.find();
     res.json(products);
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -61,28 +77,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Get single product by ID
-router.get("/:id", async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
-    res.json(product);
-  } catch (error) {
-    console.error("Error fetching product:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-// ✅ Delete a product
-router.delete("/:id", async (req, res) => {
-  try {
-    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
-    if (!deletedProduct) return res.status(404).json({ message: "Product not found" });
-    res.json({ message: "Product deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting product:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-module.exports = router;
+export default router;

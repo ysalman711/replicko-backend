@@ -1,163 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Replicko - Products</title>
-  <link rel="stylesheet" href="../css/style.css">
-  <style>
-    body {
-      font-family: 'Poppins', Arial, sans-serif;
-      background: #f8f8f8;
-      margin: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #333;
-    }
-
-    .products-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .product-card {
-      background: #fff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.2s ease;
-      padding-bottom: 15px;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .product-card img {
-      width: 100%;
-      height: 250px;
-      object-fit: cover;
-    }
-
-    .product-title {
-      font-size: 1.1em;
-      margin: 10px 0 5px 0;
-      padding: 0 10px;
-      color: #444;
-      font-weight: bold;
-    }
-
-    .product-description {
-      font-size: 0.9em;
-      color: #666;
-      margin: 0 10px 10px 10px;
-    }
-
-    .product-price {
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #27ae60;
-      margin-bottom: 10px;
-    }
-
-    .whatsapp-btn {
-      display: inline-block;
-      background: #25d366;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: 500;
-      margin: 4px;
-      transition: background 0.2s ease;
-      font-size: 0.9em;
-    }
-
-    .whatsapp-btn:hover {
-      background: #1ebe5d;
-    }
-
-    @media (max-width: 600px) {
-      .product-card img {
-        height: 200px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Replicko - Products</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: black;
+            padding: 15px;
+            text-align: center;
+            color: white;
+        }
+        h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+        .search-container {
+            text-align: center;
+            padding: 10px;
+        }
+        .search-container input {
+            width: 90%;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+            padding: 15px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+        .product-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+        .product-info {
+            padding: 10px;
+        }
+        .product-info h3 {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        .product-info p {
+            font-size: 14px;
+            color: #666;
+            min-height: 35px;
+        }
+        .product-price {
+            font-weight: bold;
+            color: green;
+            margin: 5px 0;
+        }
+        .btn-container {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .btn-container a {
+            flex: 1;
+            padding: 6px;
+            font-size: 14px;
+            text-decoration: none;
+            background: black;
+            color: white;
+            border-radius: 4px;
+        }
+        .btn-container a.buy-btn {
+            background: green;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Our Products</h1>
-<div id="productsContainer" class="products-container"></div>
+<header>
+    <h1>Our Products</h1>
+</header>
+
+<div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search products...">
+</div>
+
+<div class="products-container" id="productsContainer">
+    <!-- Products will be loaded here -->
+</div>
 
 <script>
-  async function fetchProducts() {
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const category = urlParams.get("category");
-      const subcategory = urlParams.get("subcategory");
+    const API_URL = "https://replicko-backend.onrender.com/api/products";
+    const productsContainer = document.getElementById("productsContainer");
+    const searchInput = document.getElementById("searchInput");
 
-      const res = await fetch("https://replicko-backend.onrender.com/api/products");
-      let products = await res.json();
+    async function fetchProducts() {
+        try {
+            const res = await fetch(API_URL);
+            const products = await res.json();
+            displayProducts(products);
 
-      // Apply category filters from query params
-      if (category) {
-        products = products.filter(p => (p.category || "").toLowerCase() === category.toLowerCase());
-      }
-      if (subcategory) {
-        products = products.filter(p => (p.subcategory || "").toLowerCase() === subcategory.toLowerCase());
-      }
-
-      renderProducts(products);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      document.getElementById("productsContainer").innerHTML =
-        "<p style='text-align:center;color:red;'>Failed to load products.</p>";
-    }
-  }
-
-  function renderProducts(products) {
-    const container = document.getElementById("productsContainer");
-
-    if (!products.length) {
-      container.innerHTML = "<p style='text-align:center;'>No products found in this category.</p>";
-      return;
+            searchInput.addEventListener("input", () => {
+                const searchValue = searchInput.value.toLowerCase();
+                const filtered = products.filter(p =>
+                    p.title.toLowerCase().includes(searchValue) ||
+                    p.description.toLowerCase().includes(searchValue)
+                );
+                displayProducts(filtered);
+            });
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            productsContainer.innerHTML = "<p>Failed to load products.</p>";
+        }
     }
 
-    container.innerHTML = products.map(p => {
-      const imgURL = p.image || p.imageUrl || "https://via.placeholder.com/250?text=No+Image";
-      const title = p.title || p.name || "No Title";
-      const description = p.description || "No description available.";
-      const price = p.price ? `₹${p.price}` : "Price on Request";
+    function displayProducts(products) {
+        productsContainer.innerHTML = "";
+        if (products.length === 0) {
+            productsContainer.innerHTML = "<p>No products found.</p>";
+            return;
+        }
 
-      const enquiryMsg = encodeURIComponent(`Hello, I am interested in: ${title} - ${price} (For Enquiry)`);
-      const buyMsg = encodeURIComponent(`Hello, I want to buy: ${title} - ${price}`);
+        products.forEach(product => {
+            const card = document.createElement("div");
+            card.classList.add("product-card");
 
-      const enquiryLink = `https://wa.me/919920274474?text=${enquiryMsg}`;
-      const buyLink = `https://wa.me/917738625039?text=${buyMsg}`;
+            card.innerHTML = `
+                <img src="${product.image}" alt="${product.title}">
+                <div class="product-info">
+                    <h3>${product.title}</h3>
+                    <p>${product.description}</p>
+                    <div class="product-price">₹${product.price}</div>
+                </div>
+                <div class="btn-container">
+                    <a href="https://wa.me/919920274474?text=Hi, I want to enquire about ${encodeURIComponent(product.title)}" target="_blank">For Enquiry</a>
+                    <a href="https://wa.me/917738625039?text=Hi, I want to buy ${encodeURIComponent(product.title)}" target="_blank" class="buy-btn">To Buy</a>
+                </div>
+            `;
+            productsContainer.appendChild(card);
+        });
+    }
 
-      return `
-        <div class="product-card">
-          <img src="${imgURL}" alt="${title}" 
-               onerror="this.src='https://via.placeholder.com/250?text=Image+Not+Found'">
-          <div class="product-title">${title}</div>
-          <div class="product-description">${description}</div>
-          <div class="product-price">${price}</div>
-          <a class="whatsapp-btn" href="${enquiryLink}" target="_blank">For Enquiry</a>
-          <a class="whatsapp-btn" href="${buyLink}" target="_blank">To Buy</a>
-        </div>
-      `;
-    }).join("");
-  }
-
-  fetchProducts();
+    fetchProducts();
 </script>
 
 </body>
