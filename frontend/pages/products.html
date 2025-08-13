@@ -1,164 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Replicko - Products</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f8f8f8;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background: black;
-            padding: 15px;
-            text-align: center;
-            color: white;
-        }
-        h1 {
-            margin: 0;
-            font-size: 22px;
-        }
-        .search-container {
-            text-align: center;
-            padding: 10px;
-        }
-        .search-container input {
-            width: 90%;
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .products-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
-            padding: 15px;
-        }
-        .product-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 0 6px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-        }
-        .product-card img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-        }
-        .product-info {
-            padding: 10px;
-        }
-        .product-info h3 {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #333;
-        }
-        .product-info p {
-            font-size: 14px;
-            color: #666;
-            min-height: 35px;
-        }
-        .product-price {
-            font-weight: bold;
-            color: green;
-            margin: 5px 0;
-        }
-        .btn-container {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-        .btn-container a {
-            flex: 1;
-            padding: 6px;
-            font-size: 14px;
-            text-decoration: none;
-            background: black;
-            color: white;
-            border-radius: 4px;
-        }
-        .btn-container a.buy-btn {
-            background: green;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Replicko - Our Products</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    header { padding: 15px; background: #000; color: white; text-align: center; }
+    .search-bar {
+      max-width: 400px; margin: 15px auto; display: flex;
+      border: 1px solid #ccc; border-radius: 5px; overflow: hidden;
+    }
+    .search-bar input {
+      flex: 1; padding: 8px; border: none; outline: none;
+    }
+    .search-bar button {
+      background: #000; color: white; padding: 8px 12px; border: none; cursor: pointer;
+    }
+    .products-container {
+      display: grid; gap: 15px; padding: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+    .product-card {
+      border: 1px solid #ddd; border-radius: 8px; padding: 10px; text-align: center; background: #fff;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .product-card img {
+      width: 100%; height: 180px; object-fit: cover; border-radius: 8px;
+    }
+    .product-title { font-weight: bold; margin: 8px 0; font-size: 16px; }
+    .product-desc { font-size: 13px; color: #555; margin-bottom: 5px; }
+    .product-price { font-size: 15px; font-weight: bold; margin-bottom: 10px; color: #222; }
+    .btn {
+      display: inline-block; padding: 6px 10px; font-size: 14px; border-radius: 5px;
+      margin: 3px; text-decoration: none; color: white;
+    }
+    .btn-enquiry { background-color: #25D366; }
+    .btn-buy { background-color: #007bff; }
+  </style>
 </head>
 <body>
 
-<header>
+  <header>
     <h1>Our Products</h1>
-</header>
+  </header>
 
-<div class="search-container">
+  <div class="search-bar">
     <input type="text" id="searchInput" placeholder="Search products...">
-</div>
+    <button onclick="filterProducts()">Search</button>
+  </div>
 
-<div class="products-container" id="productsContainer">
-    <!-- Products will be loaded here -->
-</div>
+  <div id="productsContainer" class="products-container">
+    <p>Loading products...</p>
+  </div>
 
-<script>
-    const API_URL = "https://replicko-backend.onrender.com/api/products";
-    const productsContainer = document.getElementById("productsContainer");
-    const searchInput = document.getElementById("searchInput");
+  <script>
+    let allProducts = [];
 
     async function fetchProducts() {
-        try {
-            const res = await fetch(API_URL);
-            const products = await res.json();
-            displayProducts(products);
-
-            searchInput.addEventListener("input", () => {
-                const searchValue = searchInput.value.toLowerCase();
-                const filtered = products.filter(p =>
-                    p.title.toLowerCase().includes(searchValue) ||
-                    p.description.toLowerCase().includes(searchValue)
-                );
-                displayProducts(filtered);
-            });
-        } catch (error) {
-            console.error("Error fetching products:", error);
-            productsContainer.innerHTML = "<p>Failed to load products.</p>";
-        }
+      try {
+        const res = await fetch('https://replicko-backend.onrender.com/api/products');
+        const products = await res.json();
+        allProducts = products;
+        displayProducts(products);
+      } catch (error) {
+        document.getElementById('productsContainer').innerHTML = '<p>Error loading products.</p>';
+      }
     }
 
     function displayProducts(products) {
-        productsContainer.innerHTML = "";
-        if (products.length === 0) {
-            productsContainer.innerHTML = "<p>No products found.</p>";
-            return;
-        }
+      const container = document.getElementById('productsContainer');
+      if (!products.length) {
+        container.innerHTML = '<p>No products found.</p>';
+        return;
+      }
 
-        products.forEach(product => {
-            const card = document.createElement("div");
-            card.classList.add("product-card");
+      container.innerHTML = products.map(product => `
+        <div class="product-card">
+          <img src="https://replicko-backend.onrender.com/${product.image}" alt="${product.title}">
+          <div class="product-title">${product.title}</div>
+          <div class="product-desc">${product.description || ''}</div>
+          <div class="product-price">₹${product.price}</div>
+          <a href="https://wa.me/919920274474?text=Enquiry%20about%20${encodeURIComponent(product.title)}" class="btn btn-enquiry">For Enquiry</a>
+          <a href="https://wa.me/917738625039?text=Buy%20${encodeURIComponent(product.title)}" class="btn btn-buy">To Buy</a>
+        </div>
+      `).join('');
+    }
 
-            card.innerHTML = `
-                <img src="${product.image}" alt="${product.title}">
-                <div class="product-info">
-                    <h3>${product.title}</h3>
-                    <p>${product.description}</p>
-                    <div class="product-price">₹${product.price}</div>
-                </div>
-                <div class="btn-container">
-                    <a href="https://wa.me/919920274474?text=Hi, I want to enquire about ${encodeURIComponent(product.title)}" target="_blank">For Enquiry</a>
-                    <a href="https://wa.me/917738625039?text=Hi, I want to buy ${encodeURIComponent(product.title)}" target="_blank" class="buy-btn">To Buy</a>
-                </div>
-            `;
-            productsContainer.appendChild(card);
-        });
+    function filterProducts() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = allProducts.filter(p =>
+        p.title.toLowerCase().includes(searchTerm) ||
+        (p.description && p.description.toLowerCase().includes(searchTerm))
+      );
+      displayProducts(filtered);
     }
 
     fetchProducts();
-</script>
+  </script>
 
 </body>
 </html>
