@@ -6,88 +6,68 @@
   <title>Replicko - Products</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f8f8f8;
-      padding: 20px;
-    }
-    .products-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-    }
-    .product-card {
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      text-align: center;
-      padding-bottom: 15px;
-    }
-    .product-card img {
-      width: 100%;
-      height: 250px;
-      object-fit: cover;
-    }
-    .product-title {
-      font-size: 1.1em;
-      margin: 10px 0;
-    }
-    .product-price {
-      font-size: 1.2em;
-      color: #27ae60;
-      margin-bottom: 10px;
-    }
-    .whatsapp-btn {
-      display: inline-block;
-      background: #25d366;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 5px;
-      text-decoration: none;
-    }
-    .whatsapp-btn:hover {
-      background: #1ebe5d;
-    }
+    body { font-family: Arial, sans-serif; background: #f8f8f8; padding: 20px; }
+    .products-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+    .product-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; padding-bottom: 15px; }
+    .product-card img { width: 100%; height: 250px; object-fit: cover; }
+    .product-title { font-size: 1.1em; margin: 10px 0; }
+    .product-price { font-size: 1.2em; color: #27ae60; margin-bottom: 10px; }
+    .whatsapp-btn { display: inline-block; background: #25d366; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; }
+    .whatsapp-btn:hover { background: #1ebe5d; }
   </style>
 </head>
 <body>
 
-  <h1>Our Products</h1>
-  <div id="productsContainer" class="products-container"></div>
+<h1>Our Products</h1>
+<div id="productsContainer" class="products-container"></div>
 
-  <script>
-    async function fetchProducts() {
-      try {
-        const res = await fetch("https://replicko-backend.onrender.com/api/products");
-        const products = await res.json();
-        renderProducts(products);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
+<script>
+  async function fetchProducts() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const category = urlParams.get("category");
+      const subcategory = urlParams.get("subcategory");
+
+      const res = await fetch("https://replicko-backend.onrender.com/api/products");
+      let products = await res.json();
+
+      // Filter based on URL query
+      if (category) products = products.filter(p => (p.category || "").toLowerCase() === category.toLowerCase());
+      if (subcategory) products = products.filter(p => (p.subcategory || "").toLowerCase() === subcategory.toLowerCase());
+
+      renderProducts(products);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  }
+
+  function renderProducts(products) {
+    const container = document.getElementById("productsContainer");
+    if (!products.length) {
+      container.innerHTML = "<p>No products found in this category.</p>";
+      return;
     }
 
-    function renderProducts(products) {
-      const productsContainer = document.getElementById("productsContainer");
-      productsContainer.innerHTML = products.map(p => {
-        let imgURL = p.image ? p.image.trim() : "https://via.placeholder.com/250?text=No+Image";
-        const message = encodeURIComponent(`Hello, I am interested in the product: ${p.title} - Price: ₹${p.price}`);
-        const whatsappLink = `https://wa.me/918866571157?text=${message}`;
+    container.innerHTML = products.map(p => {
+      const imgURL = p.image || p.imageUrl || "https://via.placeholder.com/250?text=No+Image";
+      const title = p.title || p.name || "No Title";
+      const price = p.price || "N/A";
+      const message = encodeURIComponent(`Hello, I am interested in: ${title} - ₹${price}`);
+      const whatsappLink = `https://wa.me/918866571157?text=${message}`;
 
-        return `
-          <div class="product-card">
-            <img src="${imgURL}" alt="${p.title}" 
-                 onerror="this.src='https://via.placeholder.com/250?text=Image+Not+Found'">
-            <div class="product-title">${p.title || "No Title"}</div>
-            <div class="product-price">₹${p.price || "N/A"}</div>
-            <a class="whatsapp-btn" href="${whatsappLink}" target="_blank">Enquire on WhatsApp</a>
-          </div>
-        `;
-      }).join("");
-    }
+      return `
+        <div class="product-card">
+          <img src="${imgURL}" alt="${title}" onerror="this.src='https://via.placeholder.com/250?text=Image+Not+Found'">
+          <div class="product-title">${title}</div>
+          <div class="product-price">₹${price}</div>
+          <a class="whatsapp-btn" href="${whatsappLink}" target="_blank">Enquire on WhatsApp</a>
+        </div>
+      `;
+    }).join("");
+  }
 
-    fetchProducts();
-  </script>
+  fetchProducts();
+</script>
 
 </body>
 </html>
