@@ -1,19 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Replicko - Products</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    body { font-family: Arial, sans-serif; background: #f8f8f8; padding: 20px; }
-    .products-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-    .product-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; padding-bottom: 15px; }
-    .product-card img { width: 100%; height: 250px; object-fit: cover; }
-    .product-title { font-size: 1.1em; margin: 10px 0; }
-    .product-price { font-size: 1.2em; color: #27ae60; margin-bottom: 10px; }
-    .whatsapp-btn { display: inline-block; background: #25d366; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; }
-    .whatsapp-btn:hover { background: #1ebe5d; }
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      background: #f8f8f8;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    .products-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+
+    .product-title {
+      font-size: 1.1em;
+      margin: 10px 0;
+      padding: 0 10px;
+      color: #444;
+    }
+
+    .product-price {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #27ae60;
+      margin-bottom: 10px;
+    }
+
+    .whatsapp-btn {
+      display: inline-block;
+      background: #25d366;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 500;
+      margin: auto auto 15px auto;
+      transition: background 0.2s ease;
+    }
+
+    .whatsapp-btn:hover {
+      background: #1ebe5d;
+    }
+
+    @media (max-width: 600px) {
+      .product-card img {
+        height: 200px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -31,35 +98,43 @@
       const res = await fetch("https://replicko-backend.onrender.com/api/products");
       let products = await res.json();
 
-      // Filter based on URL query
-      if (category) products = products.filter(p => (p.category || "").toLowerCase() === category.toLowerCase());
-      if (subcategory) products = products.filter(p => (p.subcategory || "").toLowerCase() === subcategory.toLowerCase());
+      // Apply category filters from query params
+      if (category) {
+        products = products.filter(p => (p.category || "").toLowerCase() === category.toLowerCase());
+      }
+      if (subcategory) {
+        products = products.filter(p => (p.subcategory || "").toLowerCase() === subcategory.toLowerCase());
+      }
 
       renderProducts(products);
     } catch (error) {
       console.error("Error fetching products:", error);
+      document.getElementById("productsContainer").innerHTML =
+        "<p style='text-align:center;color:red;'>Failed to load products.</p>";
     }
   }
 
   function renderProducts(products) {
     const container = document.getElementById("productsContainer");
+
     if (!products.length) {
-      container.innerHTML = "<p>No products found in this category.</p>";
+      container.innerHTML = "<p style='text-align:center;'>No products found in this category.</p>";
       return;
     }
 
     container.innerHTML = products.map(p => {
       const imgURL = p.image || p.imageUrl || "https://via.placeholder.com/250?text=No+Image";
       const title = p.title || p.name || "No Title";
-      const price = p.price || "N/A";
-      const message = encodeURIComponent(`Hello, I am interested in: ${title} - ₹${price}`);
+      const price = p.price ? `₹${p.price}` : "Price on Request";
+      const message = encodeURIComponent(`Hello, I am interested in: ${title} - ${price}`);
       const whatsappLink = `https://wa.me/918866571157?text=${message}`;
 
       return `
         <div class="product-card">
-          <img src="${imgURL}" alt="${title}" onerror="this.src='https://via.placeholder.com/250?text=Image+Not+Found'">
+          <img src="${imgURL}" alt="${title}" 
+               onerror="this.src='https://via.placeholder.com/250?text=Image+Not+Found'">
           <div class="product-title">${title}</div>
-          <div class="product-price">₹${price}</div>
+          <div class="product-price">${price}</div>
           <a class="whatsapp-btn" href="${whatsappLink}" target="_blank">Enquire on WhatsApp</a>
         </div>
       `;
