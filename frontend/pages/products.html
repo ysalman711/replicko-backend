@@ -3,125 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Replicko - Our Products</title>
+  <title>Replicko - Products</title>
+  <link rel="stylesheet" href="../css/style.css">
   <style>
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f8f8f8; }
-    header { padding: 15px; background: #000; color: white; text-align: center; }
-    .search-bar {
-      max-width: 400px; margin: 15px auto; display: flex;
-      border: 1px solid #ccc; border-radius: 5px; overflow: hidden;
-    }
-    .search-bar input {
-      flex: 1; padding: 8px; border: none; outline: none;
-    }
-    .search-bar button {
-      background: #000; color: white; padding: 8px 12px; border: none; cursor: pointer;
-    }
-    .products-container {
-      display: grid; gap: 15px; padding: 15px;
-      grid-template-columns: repeat(2, 1fr);
-    }
-    @media (min-width: 600px) {
-      .products-container { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
-    }
-    .product-card {
-      border: 1px solid #ddd; border-radius: 8px; padding: 10px; text-align: center; background: #fff;
-      display: flex; flex-direction: column; justify-content: space-between;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-    .product-card img {
-      width: 100%; height: 180px; object-fit: cover; border-radius: 8px;
-    }
-    .product-title { font-weight: bold; margin: 8px 0; font-size: 16px; }
-    .product-desc { font-size: 13px; color: #555; margin-bottom: 5px; min-height: 30px; }
-    .product-price { font-size: 15px; font-weight: bold; margin-bottom: 10px; color: #222; }
-    .btn {
-      display: inline-block; padding: 6px 10px; font-size: 14px; border-radius: 5px;
-      margin: 3px; text-decoration: none; color: white;
-    }
-    .btn-enquiry { background-color: #25D366; }
-    .btn-buy { background-color: #007bff; }
+    header { background: black; color: white; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; }
+    .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; padding: 20px; }
+    .card { background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .card img { width: 100%; height: 250px; object-fit: cover; border-radius: 8px; }
+    .card h3 { margin: 10px 0; font-size: 18px; }
+    .card p { color: #555; font-size: 14px; }
+    .price { font-size: 16px; font-weight: bold; color: green; margin: 5px 0; }
+    .btn { display: inline-block; padding: 8px 12px; margin: 5px 3px; font-size: 14px; border-radius: 4px; text-decoration: none; color: white; }
+    .buy-btn { background: green; }
+    .enquiry-btn { background: blue; }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>Our Products</h1>
-  </header>
+<header>All Products</header>
+<div class="container" id="product-list"></div>
 
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search products...">
-    <button onclick="filterProducts()">Search</button>
-  </div>
+<script>
+  async function fetchProducts() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const category = urlParams.get('category');
+      const subcategory = urlParams.get('subcategory');
 
-  <div id="productsContainer" class="products-container">
-    <p>Loading products...</p>
-  </div>
+      const res = await fetch("https://replicko-backend.onrender.com/api/products");
+      const products = await res.json();
 
-  <script>
-    let allProducts = [];
-    let filteredByCategory = [];
-
-    async function fetchProducts() {
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const category = urlParams.get("category");
-        const subcategory = urlParams.get("subcategory");
-
-        const res = await fetch('https://replicko-backend.onrender.com/api/products');
-        const products = await res.json();
-
-        // Filter by category + subcategory from URL
-        filteredByCategory = products.filter(p =>
-          p.category && p.subcategory &&
-          p.category.toLowerCase() === (category || "").toLowerCase() &&
-          p.subcategory.toLowerCase() === (subcategory || "").toLowerCase()
-        );
-
-        allProducts = filteredByCategory; // for search use
-        displayProducts(filteredByCategory);
-
-      } catch (error) {
-        document.getElementById('productsContainer').innerHTML = '<p>Error loading products.</p>';
-      }
-    }
-
-    function getImageUrl(product) {
-      if (!product.image) return 'https://via.placeholder.com/300x180?text=No+Image';
-      if (product.image.startsWith('http')) return product.image;
-      return `https://replicko-backend.onrender.com${product.image}`;
-    }
-
-    function displayProducts(products) {
-      const container = document.getElementById('productsContainer');
-      if (!products.length) {
-        container.innerHTML = '<p>No products found.</p>';
-        return;
-      }
-
-      container.innerHTML = products.map(product => `
-        <div class="product-card">
-          <img src="${getImageUrl(product)}" alt="${product.title || ''}">
-          <div class="product-title">${product.title || ''}</div>
-          <div class="product-desc">${product.description || ''}</div>
-          <div class="product-price">₹${product.price}</div>
-          <a href="https://wa.me/919920274474?text=${encodeURIComponent('Enquiry about ' + (product.title || ''))}" class="btn btn-enquiry">For Enquiry</a>
-          <a href="https://wa.me/917738625039?text=${encodeURIComponent('Buy ' + (product.title || ''))}" class="btn btn-buy">To Buy</a>
-        </div>
-      `).join('');
-    }
-
-    function filterProducts() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = filteredByCategory.filter(p =>
-        (p.title && p.title.toLowerCase().includes(searchTerm)) ||
-        (p.description && p.description.toLowerCase().includes(searchTerm))
+      const filtered = products.filter(p => 
+        (!category || p.category?.toLowerCase() === category.toLowerCase()) &&
+        (!subcategory || p.subcategory?.toLowerCase() === subcategory.toLowerCase())
       );
-      displayProducts(filtered);
-    }
 
-    fetchProducts();
-  </script>
+      const productList = document.getElementById("product-list");
+      productList.innerHTML = "";
+
+      filtered.forEach(product => {
+        const buyMsg = encodeURIComponent(`Hello, I want to buy: ${product.name} - Price: ₹${product.price}`);
+        const enquiryMsg = encodeURIComponent(`Hello, I have a query about: ${product.name}`);
+
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.innerHTML = `
+          <img src="https://replicko-backend.onrender.com/${product.image}" alt="${product.name}">
+          <h3>${product.name}</h3>
+          <p>${product.description}</p>
+          <div class="price">₹${product.price}</div>
+          <a href="https://wa.me/917738625039?text=${buyMsg}" class="btn buy-btn" target="_blank">To Buy</a>
+          <a href="https://wa.me/919920274474?text=${enquiryMsg}" class="btn enquiry-btn" target="_blank">For Enquiry</a>
+        `;
+        productList.appendChild(card);
+      });
+    } catch (error) {
+      console.error("Error loading products:", error);
+    }
+  }
+
+  fetchProducts();
+</script>
 
 </body>
 </html>
