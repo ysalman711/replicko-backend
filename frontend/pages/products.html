@@ -60,13 +60,27 @@
 
   <script>
     let allProducts = [];
+    let filteredByCategory = [];
 
     async function fetchProducts() {
       try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get("category");
+        const subcategory = urlParams.get("subcategory");
+
         const res = await fetch('https://replicko-backend.onrender.com/api/products');
         const products = await res.json();
-        allProducts = products;
-        displayProducts(products);
+
+        // Filter by category + subcategory from URL
+        filteredByCategory = products.filter(p =>
+          p.category && p.subcategory &&
+          p.category.toLowerCase() === (category || "").toLowerCase() &&
+          p.subcategory.toLowerCase() === (subcategory || "").toLowerCase()
+        );
+
+        allProducts = filteredByCategory; // for search use
+        displayProducts(filteredByCategory);
+
       } catch (error) {
         document.getElementById('productsContainer').innerHTML = '<p>Error loading products.</p>';
       }
@@ -87,20 +101,20 @@
 
       container.innerHTML = products.map(product => `
         <div class="product-card">
-          <img src="${getImageUrl(product)}" alt="${product.title}">
-          <div class="product-title">${product.title}</div>
+          <img src="${getImageUrl(product)}" alt="${product.title || ''}">
+          <div class="product-title">${product.title || ''}</div>
           <div class="product-desc">${product.description || ''}</div>
           <div class="product-price">₹${product.price}</div>
-          <a href="https://wa.me/919920274474?text=${encodeURIComponent('Enquiry about ' + product.title)}" class="btn btn-enquiry">For Enquiry</a>
-          <a href="https://wa.me/917738625039?text=${encodeURIComponent('Buy ' + product.title)}" class="btn btn-buy">To Buy</a>
+          <a href="https://wa.me/919920274474?text=${encodeURIComponent('Enquiry about ' + (product.title || ''))}" class="btn btn-enquiry">For Enquiry</a>
+          <a href="https://wa.me/917738625039?text=${encodeURIComponent('Buy ' + (product.title || ''))}" class="btn btn-buy">To Buy</a>
         </div>
       `).join('');
     }
 
     function filterProducts() {
       const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = allProducts.filter(p =>
-        p.title.toLowerCase().includes(searchTerm) ||
+      const filtered = filteredByCategory.filter(p =>
+        (p.title && p.title.toLowerCase().includes(searchTerm)) ||
         (p.description && p.description.toLowerCase().includes(searchTerm))
       );
       displayProducts(filtered);
