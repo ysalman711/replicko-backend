@@ -19,6 +19,19 @@
       font-size: 20px;
       font-weight: bold;
     }
+    .search-bar {
+      padding: 10px;
+      text-align: center;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .search-bar input {
+      width: 90%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
     /* Mobile: 2 products per row */
     .container {
       display: grid;
@@ -42,7 +55,7 @@
       flex-direction: column;
       justify-content: space-between;
     }
-    .card img {
+    .card img, .card video {
       width: 100%;
       height: 180px;
       object-fit: cover;
@@ -80,9 +93,16 @@
 <body>
 
 <header>All Products</header>
+
+<div class="search-bar">
+  <input type="text" id="search-input" placeholder="Search products..." onkeyup="filterBySearch()">
+</div>
+
 <div class="container" id="product-list"></div>
 
 <script>
+  let allProducts = [];
+
   async function fetchProducts() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -92,37 +112,60 @@
       const res = await fetch("https://replicko-backend.onrender.com/api/products");
       const products = await res.json();
 
-      const filtered = products.filter(p => 
+      allProducts = products.filter(p => 
         (!category || p.category?.toLowerCase() === category.toLowerCase()) &&
         (!subcategory || p.subcategory?.toLowerCase() === subcategory.toLowerCase())
       );
 
-      const productList = document.getElementById("product-list");
-      productList.innerHTML = "";
-
-      filtered.forEach(product => {
-        const imgUrl = product.image?.startsWith("http")
-          ? product.image
-          : `https://replicko-backend.onrender.com/${product.image}`;
-
-        const buyMsg = encodeURIComponent(`Hello, I want to buy: ${product.title || product.name} - Price: ₹${product.price}`);
-        const enquiryMsg = encodeURIComponent(`Hello, I have a query about: ${product.title || product.name} - Price: ₹${product.price}`);
-
-        const card = document.createElement("div");
-        card.classList.add("card");
-        card.innerHTML = `
-          <img src="${imgUrl}" alt="${product.title || product.name || "Product"}">
-          <h3>${product.title || product.name || "No Name"}</h3>
-          <p>${product.description || ""}</p>
-          <div class="price">₹${product.price || ""}</div>
-          <a href="https://wa.me/917738625039?text=${buyMsg}" class="btn buy-btn" target="_blank">To Buy</a>
-          <a href="https://wa.me/919920274474?text=${enquiryMsg}" class="btn enquiry-btn" target="_blank">For Enquiry</a>
-        `;
-        productList.appendChild(card);
-      });
+      displayProducts(allProducts);
     } catch (error) {
       console.error("Error loading products:", error);
     }
+  }
+
+  function displayProducts(productArray) {
+    const productList = document.getElementById("product-list");
+    productList.innerHTML = "";
+
+    productArray.forEach(product => {
+      const mediaUrl = product.image?.startsWith("http")
+        ? product.image
+        : `https://replicko-backend.onrender.com/${product.image}`;
+
+      let mediaTag;
+      if (/\.(mp4|webm|ogg)$/i.test(mediaUrl)) {
+        mediaTag = `<video controls>
+                      <source src="${mediaUrl}" type="video/mp4">
+                      Your browser does not support the video tag.
+                    </video>`;
+      } else {
+        mediaTag = `<img src="${mediaUrl}" alt="${product.title || product.name || "Product"}">`;
+      }
+
+      const buyMsg = encodeURIComponent(`Hello, I want to buy: ${product.title || product.name} - Price: ₹${product.price}`);
+      const enquiryMsg = encodeURIComponent(`Hello, I have a query about: ${product.title || product.name} - Price: ₹${product.price}`);
+
+      const card = document.createElement("div");
+      card.classList.add("card");
+      card.innerHTML = `
+        ${mediaTag}
+        <h3>${product.title || product.name || "No Name"}</h3>
+        <p>${product.description || ""}</p>
+        <div class="price">₹${product.price || ""}</div>
+        <a href="https://wa.me/917738625039?text=${buyMsg}" class="btn buy-btn" target="_blank">To Buy</a>
+        <a href="https://wa.me/919920274474?text=${enquiryMsg}" class="btn enquiry-btn" target="_blank">For Enquiry</a>
+      `;
+      productList.appendChild(card);
+    });
+  }
+
+  function filterBySearch() {
+    const query = document.getElementById("search-input").value.toLowerCase();
+    const filtered = allProducts.filter(product =>
+      (product.title || product.name || "").toLowerCase().includes(query) ||
+      (product.description || "").toLowerCase().includes(query)
+    );
+    displayProducts(filtered);
   }
 
   fetchProducts();
