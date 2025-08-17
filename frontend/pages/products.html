@@ -142,8 +142,13 @@
         mediaTag = `<img src="${mediaUrl}" alt="${product.title || product.name || "Product"}">`;
       }
 
-      const buyMsg = encodeURIComponent(`Hello, I want to buy: ${product.title || product.name} - Price: ₹${product.price}`);
-      const enquiryMsg = encodeURIComponent(`Hello, I have a query about: ${product.title || product.name} - Price: ₹${product.price}`);
+      // ✅ Include product image URL in WhatsApp message
+      const buyMsg = encodeURIComponent(
+        `Hello, I want to buy:\n${product.title || product.name}\nPrice: ₹${product.price}\nImage: ${mediaUrl}`
+      );
+      const enquiryMsg = encodeURIComponent(
+        `Hello, I have a query about:\n${product.title || product.name}\nPrice: ₹${product.price}\nImage: ${mediaUrl}`
+      );
 
       const card = document.createElement("div");
       card.classList.add("card");

@@ -18,7 +18,7 @@
       background-color: black;
       color: white;
       padding: 15px 20px;
-      flex-wrap: wrap;
+      position: relative;
     }
 
     .logo {
@@ -30,7 +30,6 @@
       list-style: none;
       display: flex;
       gap: 15px;
-      flex-wrap: wrap;
     }
 
     .nav-links li {
@@ -41,6 +40,42 @@
       color: white;
       text-decoration: none;
       font-weight: 500;
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 4px;
+    }
+
+    .hamburger span {
+      width: 25px;
+      height: 3px;
+      background: white;
+    }
+
+    /* Mobile Menu */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: black;
+        padding: 15px 0;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .hamburger {
+        display: flex;
+      }
     }
 
     .banner {
@@ -98,40 +133,6 @@
       background-color: #000;
       color: white;
     }
-
-    @media (max-width: 500px) {
-      .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-      }
-
-      .nav-links {
-        flex-direction: column;
-        align-items: flex-start;
-        padding-left: 10px;
-        gap: 6px;
-      }
-
-      .banner h1 {
-        font-size: 20px;
-      }
-
-      .category-grid {
-        grid-template-columns: 1fr;
-        padding: 20px 15px;
-      }
-
-      .category-card {
-        font-size: 16px;
-        padding: 15px;
-      }
-
-      .category-card img {
-        height: auto;
-        object-fit: contain;
-      }
-    }
   </style>
 </head>
 <body>
@@ -144,6 +145,9 @@
       <li><a href="../index.html#about">About</a></li>
       <li><a href="../index.html#contact">Contact</a></li>
     </ul>
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
   </nav>
 
   <!-- Banner -->
@@ -184,6 +188,10 @@
     <p>&copy; 2025 Replicko. All rights reserved.</p>
   </footer>
 
+  <script>
+    function toggleMenu() {
+      document.querySelector('.nav-links').classList.toggle('active');
+    }
+  </script>
 </body>
 </html>
-
