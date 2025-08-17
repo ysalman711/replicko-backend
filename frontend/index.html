@@ -14,15 +14,14 @@
   <!-- Navbar -->
   <nav class="navbar">
     <div class="logo">Replicko</div>
-    
-    <!-- Hamburger for Mobile -->
-    <div class="hamburger" id="hamburger">☰</div>
-
-    <ul class="nav-links" id="nav-links">
+    <ul class="nav-links">
       <li><a href="#home">Home</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
   </nav>
 
   <!-- Hero Banner -->
@@ -100,19 +99,12 @@
       <a id="inst" href="https://youtube.com/@salmandhukka-r1z?si=NXMJJ1y4QP9Qt9o5" target="_blank">YouTube</a>
     </p>
   </footer>
-
-  <!-- ✅ JS for Hamburger -->
+  
   <script>
-    const hamburger = document.getElementById("hamburger");
-    const navLinks = document.getElementById("nav-links");
-
-    hamburger.addEventListener("click", () => {
-      navLinks.classList.toggle("active");
-
-      // Toggle icon between ☰ and ✖
-      hamburger.textContent = 
-        hamburger.textContent === "☰" ? "✖" : "☰";
-    });
+    function toggleMenu() {
+      document.querySelector('.nav-links').classList.toggle('active');
+    }
   </script>
+
 </body>
 </html>

@@ -1,15 +1,17 @@
+/* ---------------- RESET ---------------- */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
+
 body {
   font-family: 'Poppins', sans-serif;
   background: #fff;
   color: #333;
 }
 
-/* Navbar */
+/* ---------------- NAVBAR ---------------- */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -17,182 +19,132 @@ body {
   background: #000;
   padding: 12px 24px;
   color: white;
-  flex-wrap: wrap;
+  position: relative; /* Needed for mobile menu positioning */
 }
+
 .logo {
   font-size: 22px;
   font-weight: bold;
 }
+
 .nav-links {
   list-style: none;
   display: flex;
   gap: 18px;
 }
+
 .nav-links li a {
   color: white;
   text-decoration: none;
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
-/* Hamburger */
+.nav-links li a:hover {
+  color: #f4c542; /* Highlight on hover */
+}
+
+/* ---------------- HAMBURGER ---------------- */
 .hamburger {
   display: none;
-  font-size: 28px;
+  flex-direction: column;
   cursor: pointer;
-  color: white;
+  gap: 4px;
 }
 
-/* Hero Banner */
-.hero {
-  height: 45vh;
-  background: url('../images/bg-dark.png') no-repeat center center/cover;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.hero .overlay {
-  background: rgba(0,0,0,0.6);
-  padding: 30px 20px;
-  border-radius: 8px;
-  text-align: center;
-  color: white;
-}
-.hero h1 {
-  font-size: 28px;
-  margin-bottom: 8px;
-}
-.hero p {
-  font-size: 15px;
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background: white;
+  border-radius: 2px;
 }
 
-/* Brand Collection */
-.collections {
-  text-align: center;
-  padding: 15px 10px;
-}
-.collections h2 {
-  font-size: 22px;
-  margin-bottom: 18px;
-}
-.collection-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-.btn {
-  background-color: black;
-  color: rgb(13, 199, 212);
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 600;
-  text-decoration: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-.btn:hover {
-  background-color: #1c1c1c;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
-  transform: translateY(-2px);
-}
-
-/* Celebrity Showcase */
-.celebrity-showcase {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  padding: 35px 15px;
-  background: #f5f5f5;
-}
-.celebrity-showcase .card {
-  background: #fff;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  overflow: hidden;
-  max-width: 280px;
-  text-align: center;
-}
-.celebrity-showcase .card img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-.celebrity-showcase .card p {
-  padding: 12px 10px;
-  font-weight: 600;
-  font-size: 15px;
-}
-#vir{
-  height: 45vh;
-}
-
-/* About & Contact */
-.about, .contact {
-  padding: 25px 15px;
-  text-align: center;
-}
-.about h2, .contact h2 {
-  font-size: 27px;
-  margin-bottom: 10px;
-}
-.about p, .contact p {
-  max-width: 650px;
-  margin: 0 auto 8px;
-  line-height: 1.5;
-  font-size: 17px;
-}
-.icon {
-  width: 20px;
-  height: 20px;
-  vertical-align: middle;
-  margin-right: 8px;
-}
-
-/* Footer */
-footer {
-  background: #000;
-  color: #fff;
-  padding: 15px;
-  font-size: 13px;
-  text-align: center;
-}
-footer .icon {
-  width: 21px;
-  vertical-align: middle;
-  margin-right: 5px;
-}
-#inst{
-  color: #fff;
-}
-
-/* 🔁 Responsive Fixes */
+/* ---------------- RESPONSIVE ---------------- */
 @media (max-width: 768px) {
-  .hamburger {
-    display: block;
-  }
+  /* Hide normal nav-links on mobile */
   .nav-links {
     display: none;
     flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 0;
     width: 100%;
-    background: #000;
-    padding: 10px 0;
-  }
-  .nav-links li {
+    background: black;
+    padding: 15px 0;
     text-align: center;
-    margin: 10px 0;
   }
+
+  /* Show nav when active */
   .nav-links.active {
     display: flex;
-    animation: slideDown 0.3s ease;
+  }
+
+  /* Show hamburger only on mobile */
+  .hamburger {
+    display: flex;
   }
 }
 
-/* Slide-down animation */
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+@media (min-width: 769px) {
+  /* Ensure nav is always visible on big screens */
+  .nav-links {
+    display: flex !important;
+    position: static;
+    flex-direction: row;
+    background: none;
+    width: auto;
+    padding: 0;
+  }
+
+  /* Hide hamburger on large screens */
+  .hamburger {
+    display: none !important;
+  }
+}
+
+/* ---------------- HERO SECTION ---------------- */
+.hero {
+  height: 100vh;
+  background: url('images/bg-dark.png') no-repeat center center/cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.hero button {
+  background: #f4c542;
+  border: none;
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.hero button:hover {
+  background: #e0b534;
+}
+
+/* ---------------- FOOTER ---------------- */
+footer {
+  background: #000;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 14px;
 }
