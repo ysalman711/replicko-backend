@@ -26,7 +26,7 @@ body {
 }
 .nav-links {
   list-style: none;
-  display: flex;   /* ✅ Desktop default = visible */
+  display: flex;
   gap: 18px;
 }
 .nav-links li a {
@@ -37,7 +37,7 @@ body {
 
 /* ✅ Hamburger */
 .hamburger {
-  display: none;  /* ✅ Hidden in desktop */
+  display: none;
   font-size: 26px;
   cursor: pointer;
   color: white;
@@ -173,7 +173,7 @@ footer .icon {
 /* 🔁 Responsive Fixes */
 @media (max-width: 768px) {
   .nav-links {
-    display: none;   /* ✅ Hide links in mobile */
+    display: none; /* hide links on mobile */
     flex-direction: column;
     background: #000;
     position: absolute;
@@ -184,26 +184,18 @@ footer .icon {
     padding: 15px 0;
   }
   .nav-links.active {
-    display: flex;  /* ✅ Show when hamburger clicked */
+    display: flex;
   }
   .hamburger {
-    display: block; /* ✅ Show hamburger only in mobile */
+    display: block; /* show hamburger only on mobile */
   }
-
-  .hero {
-    height: 48vh;
+}
+@media (min-width: 769px) {
+  .hamburger {
+    display: none; /* hide hamburger on desktop */
   }
-  .hero h1 {
-    font-size: 23px;
-  }
-  .hero p {
-    font-size: 16px;
-  }
-  .celebrity-showcase {
-    padding: 25px 10px;
-  }
-  .celebrity-showcase .card {
-    max-width: 90%;
+  .nav-links {
+    display: flex; /* show menu normally */
   }
 }
 @media (max-width: 480px) {
