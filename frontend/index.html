@@ -14,7 +14,8 @@
   <!-- Navbar -->
   <nav class="navbar">
     <div class="logo">Replicko</div>
-    <ul class="nav-links">
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <ul class="nav-links" id="navLinks">
       <li><a href="#home">Home</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -31,34 +32,34 @@
 
   <!-- Brand Buttons -->
   <section class="collections">
-    <h2>Brands Collection</h2>
+    <h2>Click Here </h2>
     <div class="collection-buttons">
-      <a href="pages/men.html" class="btn">For Men</a>
-      <a href="pages/women.html" class="btn">For Women</a>
+      <a href="pages/men.html" class="btn">Mens Collection </a>
+      <a href="pages/women.html" class="btn">Womens Collection</a>
     </div>
   </section>
 
   <!-- Featured Celebrity Products -->
   <section class="celebrity-showcase">
-    <div class="card">
-      <img id="vir" src="images/celebrity1.png" alt="Cristiano Ronaldo wearing Watch">
-      <p><strong>Inspired by Ronaldo’s Premium Green Skeleton Watch</strong></p>
+    <div class="card" data-celeb="ronaldo">
+      <div class="slideshow-container"></div>
+      <p><strong>Inspired by Celebrities Wore Branded Watches</strong></p>
     </div>
-    <div class="card">
-      <img id="vir" src="images/celebrity2.jpg" alt="SRK with Perfume">
-      <p><strong>Inspired by Virat’s Oakley Sports Glares</strong></p>
+    <div class="card" data-celeb="virat">
+      <div class="slideshow-container"></div>
+      <p><strong>Inspired by Icons Choices Shades</strong></p>
     </div>
-    <div class="card">
-      <img id="vir" src="images/celebrity3.webp" alt="Kohli wearing Glares">
-      <p><strong>Inspired by SRK Approved Fragrance · SuperX Perfume</strong></p>
+    <div class="card" data-celeb="srk">
+      <div class="slideshow-container"></div>
+      <p><strong>Inspired by Stars Using Perfumes</strong></p>
     </div>
-    <div class="card">
-      <img id="vir" src="images/celebrity4.jpg" alt="Kohli wearing Glares">
-      <p><strong>Inspired by Lv Slings and Bags</strong></p>
+    <div class="card" data-celeb="lvbags">
+      <div class="slideshow-container"></div>
+      <p><strong>Inspired by Branded Handbags and Slings</strong></p>
     </div>
-    <div class="card">
-      <img id="vir" src="images/celebrity5.webp" alt="Kohli wearing Glares">
-      <p><strong>Inspired by The Rocks Under Armour Shoes</strong></p>
+    <div class="card" data-celeb="therock">
+      <div class="slideshow-container"></div>
+      <p><strong>Aura of Replicko.in Collections</strong></p>
     </div>
   </section>
 
@@ -96,6 +97,84 @@
       <a id="inst" href="https://youtube.com/@salmandhukka-r1z?si=NXMJJ1y4QP9Qt9o5" target="_blank">YouTube</a>
     </p>
   </footer>
+
+  <!-- ✅ Slideshow Script (Images + Videos Mix) -->
+  <script>
+    const slides = {
+      ronaldo: [
+        "images/ronaldo/2.mp4","images/ronaldo/14.mp4","images/ronaldo/1.png",
+        "images/ronaldo/7.mp4","images/ronaldo/3.jpg","images/ronaldo/8.mp4", 
+        "images/ronaldo/4.jpg","images/ronaldo/9.mp4","images/ronaldo/10.mp4",
+        "images/ronaldo/5.jpg","images/ronaldo/6.mp4","images/ronaldo/11.mp4",
+        "images/ronaldo/12.mp4","images/ronaldo/13.mp4"  
+      ],
+      virat: [
+        "images/virat/1.jpg","images/virat/2.mp4","images/virat/3.jpg",
+        "images/virat/7.mp4","images/virat/4.jpg","images/virat/8.mp4",
+        "images/virat/5.jpg","images/virat/6.mp4","images/virat/9.mp4",
+        "images/virat/10.mp4","images/virat/11.mp4","images/virat/12.mp4"
+      ],
+      srk: [
+        "images/srk/1.webp","images/srk/2.mp4","images/srk/3.jpg",
+        "images/srk/7.mp4","images/srk/4.jpg","images/srk/6.mp4",
+        "images/srk/5.jpg","images/srk/8.mp4","images/srk/9.mp4"
+      ],
+      lvbags: [
+        "images/lvbags/1.jpg","images/lvbags/6.mp4","images/lvbags/2.jpg",
+        "images/lvbags/7.mp4","images/lvbags/3.jpg","images/lvbags/8.mp4",
+        "images/lvbags/4.mp4","images/lvbags/5.jpg","images/lvbags/9.mp4"
+      ],
+      therock: [
+        "images/therock/1.webp","images/therock/6.mp4","images/therock/2.jpg",
+        "images/therock/7.mp4","images/therock/3.jpg","images/therock/8.mp4",
+        "images/therock/4.jpg","images/therock/5.mp4"
+      ]
+    };
+
+    document.querySelectorAll(".celebrity-showcase .card").forEach(card => {
+      const celeb = card.getAttribute("data-celeb");
+      const container = card.querySelector(".slideshow-container");
+      let index = 0;
+
+      function showSlide() {
+        const file = slides[celeb][index];
+        container.innerHTML = "";
+
+        if (file.endsWith(".mp4")) {
+          let video = document.createElement("video");
+          video.src = file;
+          video.autoplay = true;
+          video.loop = false;
+          video.muted = true;
+          video.playsInline = true;
+          video.style.width = "100%";
+          video.style.height = "250px";
+          video.style.objectFit = "cover";
+          video.style.borderRadius = "8px";
+          container.appendChild(video);
+        } else {
+          let img = document.createElement("img");
+          img.src = file;
+          img.className = "slideshow";
+          img.style.height = "250px";
+          img.style.objectFit = "cover";
+          container.appendChild(img);
+        }
+
+        index = (index + 1) % slides[celeb].length;
+      }
+
+      showSlide();
+      setInterval(showSlide, 5000);
+    });
+
+    // ✅ Hamburger menu toggle
+    const hamburger = document.getElementById("hamburger");
+    const navLinks = document.getElementById("navLinks");
+    hamburger.addEventListener("click", () => {
+      navLinks.classList.toggle("active");
+    });
+  </script>
 
 </body>
 </html>
