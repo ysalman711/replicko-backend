@@ -1,12 +1,12 @@
-* {
+*{
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 body {
   font-family: 'Poppins', sans-serif;
-  background: grey;
-  color: black;
+  background: #0A192F;
+  color: #FFD700;
 }
 
 /* Navbar */
@@ -14,9 +14,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgb(13, 199, 212);
+  background: #0A192F;
   padding: 12px 24px;
-  color: black;
+  color: #FFD700;
   flex-wrap: wrap;
 }
 .logo {
@@ -29,9 +29,12 @@ body {
   gap: 18px;
 }
 .nav-links li a {
-  color: black;
+  color: #FFD700;
   text-decoration: none;
   font-weight: 500;
+}
+.nav-links li a:hover {
+  color:white;
 }
 .hamburger {
   display: none;
@@ -39,7 +42,7 @@ body {
   cursor: pointer;
   background: none;
   border: none;
-  color: black;
+  color:#FFD700;
 }
 
 /* Hero Banner */
@@ -56,7 +59,7 @@ body {
   padding: 30px 20px;
   border-radius: 8px;
   text-align: center;
-  color: grey;
+  color: #FFD700;
 }
 .hero h1 {
   font-size: 28px;
@@ -82,8 +85,8 @@ body {
   flex-wrap: wrap;
 }
 .btn {
-  background-color: rgb(13, 199, 212);
-  color: black;
+  background-color: #FFD700;
+  color: #0A192F;
   padding: 10px 20px;
   border-radius: 6px;
   font-weight: 600;
@@ -94,7 +97,8 @@ body {
   overflow: hidden;
 }
 .btn:hover {
-  background-color: #1c1c1c;
+  background-color: #0A192F;
+  color:#FFD700;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
   transform: translateY(-2px);
 }
@@ -106,10 +110,10 @@ body {
   gap: 20px;
   flex-wrap: wrap;
   padding: 35px 15px;
-  background: grey;
+  background: #0A192F;
 }
 .celebrity-showcase .card {
-  background: rgb(13, 199, 212);
+  background: #1E1E1E;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   border-radius: 8px;
   overflow: hidden;
@@ -154,8 +158,8 @@ body {
 
 /* Footer */
 footer {
-  background: rgb(13, 199, 212);
-  color: black;
+  background: #0A192F;
+  color: #FFD700;
   padding: 15px;
   font-size: 16px;
   text-align: center;
@@ -165,15 +169,22 @@ footer .icon {
   vertical-align: middle;
   margin-right: 5px;
 }
+#about,#contact{
+  background-color: #1E1E1E;
+
+}
 #inst{
-  color: black;
+  color: pink;
+}
+#inst1{
+  color: red;
 }
 
 /* 🔁 Responsive Fixes */
 @media (max-width: 768px) {
   .hero { height: 48vh; }
-  .hero h1 { font-size: 23px; }
-  .hero p { font-size: 16px; }
+  .hero h1 { font-size: 16px; }
+  .hero p { font-size: 13px; }
   .celebrity-showcase { padding: 25px 10px; }
   .celebrity-showcase .card { max-width: 90%; }
 
@@ -181,7 +192,7 @@ footer .icon {
     display: none;
     flex-direction: column;
     width: 100%;
-    background: rgb(13, 199, 212);
+    background: #0A192F;
     padding: 10px 0;
   }
   .nav-links.active {
